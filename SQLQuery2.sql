@@ -29,3 +29,12 @@ VALUES
 (N'Nguyễn Minh Quân', '2001-04-14', N'Nam', N'Hà Nội', 'quan.nguyen@gmail.com', '0909999999', 'CNTT03'),
 (N'Trịnh Thị Thu', '2002-10-22', N'Nữ', N'Ninh Bình', 'thu.trinh@gmail.com', '0910000000', 'CNTT01');
 SELECT * FROM students;
+
+DELETE FROM students WHERE name IS NULL OR email IS NULL;
+
+
+
+SELECT * FROM students ORDER BY id ASC;
+DELETE FROM students;
+DBCC CHECKIDENT ('students', RESEED, 0);
+
