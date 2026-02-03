@@ -2,12 +2,12 @@
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /app
 
-COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
+COPY schoolmanager1/pom.xml .
+COPY schoolmanager1/mvnw .
+COPY schoolmanager1/.mvn .mvn
 RUN mvn -B -q -e -DskipTests dependency:go-offline
 
-COPY src src
+COPY schoolmanager1/src src
 RUN mvn clean package -DskipTests
 
 
