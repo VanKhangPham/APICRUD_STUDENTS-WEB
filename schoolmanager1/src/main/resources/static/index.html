@@ -3,236 +3,590 @@
 <head>
     <meta charset="UTF-8">
     <title>Quản lý sinh viên</title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; }
-        .container { max-width: 900px; margin-top: 30px; }
-        .table-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .form-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px; }
-        h3 { color: #333; font-weight: bold; margin-bottom: 20px; }
-        h4 { color: #555; margin-top: 20px; margin-bottom: 15px; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --ink: #0f0f0f;
+            --ink-mid: #444;
+            --ink-muted: #000000;
+            --ink-faint: #c8c8c8;
+            --line: #ebebeb;
+            --bg: #f6f6f4;
+            --surface: #fff;
+            --accent: #2a52e8;
+            --accent-bg: #eef1fd;
+            --danger: #d13030;
+            --danger-bg: #fdf0f0;
+            --warn: #c97a10;
+            --warn-bg: #fdf5e8;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        .shell {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 56px 32px 100px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 36px;
+        }
+
+        .header-left { display: flex; flex-direction: column; gap: 2px; }
+
+        header h1 {
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: var(--ink-muted);
+            font-family: 'DM Mono', monospace;
+            letter-spacing: 0.02em;
+        }
+
+        .count-badge {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            color: var(--ink-mid);
+            transition: all 0.2s;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .search-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-wrap svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--ink-faint);
+            pointer-events: none;
+            transition: color 0.15s;
+        }
+
+        .search-wrap:focus-within svg { color: var(--accent); }
+
+        .search-wrap input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 9px 12px 9px 36px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .search-wrap input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(42,82,232,0.08);
+        }
+
+        .search-wrap input::placeholder { color: var(--ink-faint); }
+
+        .btn-ghost {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.06em;
+            color: var(--ink-muted);
+            cursor: pointer;
+            padding: 9px 14px;
+            text-transform: uppercase;
+            transition: color 0.15s, border-color 0.15s;
+            white-space: nowrap;
+        }
+        .btn-ghost:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        thead tr {
+            border-bottom: 1px solid var(--line);
+            background: #fafafa;
+        }
+
+        thead th {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            padding: 11px 16px;
+            text-align: left;
+        }
+
+        thead th:last-child { text-align: right; }
+
+        tbody tr {
+            border-bottom: 1px solid var(--line);
+            transition: background 0.12s;
+            animation: rowIn 0.25s ease both;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #f9f9f8; }
+
+        @keyframes rowIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        tbody td { padding: 13px 16px; vertical-align: middle; }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-bg);
+            color: var(--accent);
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .name-cell-inner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .name-text { font-weight: 500; font-size: 14px; }
+
+        td.id-cell {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--ink-faint);
+            width: 52px;
+        }
+
+        td.email-cell { font-size: 13px; color: var(--ink-muted); }
+
+        td.action-cell { text-align: right; white-space: nowrap; }
+
+        .btn-action {
+            background: none;
+            border: 1px solid transparent;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 5px;
+            transition: background 0.12s, border-color 0.12s;
+        }
+
+        .btn-edit { color: var(--warn); }
+        .btn-edit:hover { background: var(--warn-bg); border-color: #f0d09a; }
+
+        .btn-delete { color: var(--danger); }
+        .btn-delete:hover { background: var(--danger-bg); border-color: #f5b8b8; }
+
+        .empty-state {
+            padding: 48px 16px;
+            text-align: center;
+            color: var(--ink-faint);
+            font-size: 13px;
+        }
+
+        .form-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .form-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink);
+        }
+
+        .form-mode-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--ink-faint);
+            transition: background 0.25s, box-shadow 0.25s;
+        }
+        .form-mode-dot.editing {
+            background: var(--warn);
+            box-shadow: 0 0 0 3px var(--warn-bg);
+        }
+
+        .form-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .field label {
+            display: block;
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-bottom: 6px;
+            transition: color 0.15s;
+        }
+
+        .field:focus-within label { color: var(--accent); }
+
+        .field input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: 7px;
+            padding: 9px 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+        }
+
+        .field input:focus {
+            background: var(--surface);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(42,82,232,0.08);
+        }
+
+        .field input::placeholder { color: var(--ink-faint); }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: var(--ink);
+            color: #fff;
+            border: 1px solid var(--ink);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 9px 22px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+        .btn-primary:hover { opacity: 0.82; }
+        .btn-primary:active { transform: scale(0.98); }
+
+        .btn-secondary {
+            background: none;
+            border: 1px solid var(--line);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            color: var(--ink-muted);
+            padding: 9px 18px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        .btn-secondary:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+        #toast-container {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 9999;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 8px;
+            padding: 11px 16px;
+            font-size: 13px;
+            min-width: 220px;
+            max-width: 320px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+            animation: toastIn 0.22s ease;
+        }
+
+        .toast.error { background: #8b1f1f; }
+
+        .toast-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .toast.success .toast-dot { background: #4ade80; }
+        .toast.error   .toast-dot { background: #f87171; }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes toastOut {
+            to { opacity: 0; transform: translateY(6px); }
+        }
     </style>
 </head>
 <body>
+<div class="shell">
 
-<div class="container">
-    <h3>QUẢN LÝ SINH VIÊN</h3>
-
-    <!-- DANH SÁCH SINH VIÊN -->
-    <div class="table-container">
-        <div class="input-group mb-3">
-            <input type="text" id="search" class="form-control"
-                   placeholder=" Tìm theo tên..." onkeyup="searchStudent()">
-            <button class="btn btn-outline-secondary" onclick="loadStudents()">Reset</button>
+    <header>
+        <div class="header-left">
+            <h1>Quản lý sinh viên</h1>
+            <span class="subtitle">Hệ thống quản lý</span>
         </div>
+        <div class="count-badge" id="countLabel">—</div>
+    </header>
 
-        <table class="table table-striped table-hover">
-            <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Tên</th>
-                <th>Email</th>
-                <th>Hành động</th>
-            </tr>
+    <div class="toolbar">
+        <div class="search-wrap">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <path d="M10 6.5C10 8.43 8.43 10 6.5 10C4.57 10 3 8.43 3 6.5C3 4.57 4.57 3 6.5 3C8.43 3 10 4.57 10 6.5ZM9.38 10.09L12.5 13.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <input type="text" id="search" placeholder="Tìm theo tên sinh viên…" onkeyup="searchStudent()">
+        </div>
+        <button class="btn-ghost" onclick="loadStudents()">Đặt lại</button>
+    </div>
+
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:52px">ID</th>
+                    <th>Tên sinh viên</th>
+                    <th>Email</th>
+                    <th style="text-align:right">Hành động</th>
+                </tr>
             </thead>
             <tbody id="studentTable"></tbody>
         </table>
     </div>
 
-    <!-- FORM THÊM/SỬA -->
-    <div class="form-container">
-        <h4 id="formTitle">Thêm sinh viên</h4>
+    <div class="form-card">
+        <div class="form-header">
+            <span class="form-title" id="formTitle">Thêm sinh viên mới</span>
+            <div class="form-mode-dot" id="modeDot"></div>
+        </div>
         <form id="studentForm" onsubmit="handleSubmit(event)">
             <input type="hidden" id="editId">
-            
-            <div class="mb-3">
-                <label class="form-label">Tên sinh viên</label>
-                <input type="text" id="name" class="form-control" placeholder="Nhập tên..." required>
+            <div class="form-fields">
+                <div class="field">
+                    <label for="name">Họ và tên</label>
+                    <input type="text" id="name" placeholder="Nguyễn Văn A…" required autocomplete="off">
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="example@email.com" required autocomplete="off">
+                </div>
             </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" id="email" class="form-control" placeholder="Nhập email..." required>
-            </div>
-            
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary" id="submitBtn">Thêm</button>
-                <button type="button" class="btn btn-secondary" onclick="resetForm()">Hủy</button>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary" id="submitBtn">Thêm</button>
+                <button type="button" class="btn-secondary" onclick="resetForm()">Huỷ</button>
             </div>
         </form>
     </div>
+
 </div>
 
+<div id="toast-container"></div>
+
 <script>
-const API = "https://apicrud-students-web-7.onrender.com/api/students";
-// http://localhost:8080/api/students; const API = `${window.location.origin}/api/students`;
-
-
+const API = `${window.location.origin}/api/students`;
 let isEditing = false;
 
-// Load danh sách sinh viên
+function escapeHtml(v) {
+    return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escapeJs(v) {
+    return String(v).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
+function initials(name) {
+    return String(name).trim().split(/\s+/).map(w => w[0]).slice(-2).join('').toUpperCase();
+}
+
+function toast(msg, type = 'success') {
+    const tc = document.getElementById('toast-container');
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.innerHTML = `<div class="toast-dot"></div><span>${msg}</span>`;
+    tc.appendChild(el);
+    setTimeout(() => {
+        el.style.animation = 'toastOut 0.2s ease forwards';
+        setTimeout(() => el.remove(), 200);
+    }, 2800);
+}
+
+function renderStudentRow(s, delay) {
+    return `<tr style="animation-delay:${delay}ms">
+        <td class="id-cell">${escapeHtml(s.id)}</td>
+        <td><div class="name-cell-inner">
+            <div class="avatar">${initials(s.name)}</div>
+            <span class="name-text">${escapeHtml(s.name)}</span>
+        </div></td>
+        <td class="email-cell">${escapeHtml(s.email)}</td>
+        <td class="action-cell">
+            <button class="btn-action btn-edit" onclick="editStudent('${escapeJs(s.id)}','${escapeJs(s.name)}','${escapeJs(s.email)}')">Sửa</button>
+            <button class="btn-action btn-delete" onclick="deleteStudent('${escapeJs(s.id)}')">Xoá</button>
+        </td>
+    </tr>`;
+}
+
+function setCount(n, label) {
+    document.getElementById('countLabel').textContent = label || n + ' sinh viên';
+}
+
 function loadStudents() {
     fetch(API)
-        .then(res => {
-            if (!res.ok) throw new Error("Không thể kết nối đến server");
-            return res.json();
-        })
+        .then(r => { if (!r.ok) throw new Error(); return r.json(); })
         .then(data => {
-            let html = "";
-            if (data.length === 0) {
-                html = `<tr><td colspan="4" class="text-center text-muted">Không có sinh viên</td></tr>`;
-            } else {
-                data.forEach(s => {
-                    html += `
-                    <tr>
-                        <td><strong>${s.id}</strong></td>
-                        <td>${s.name}</td>
-                        <td>${s.email}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="editStudent(${s.id}, '${s.name}', '${s.email}')">Sửa</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.id})">Xóa</button>
-                        </td>
-                    </tr>`;
-                });
-            }
-            document.getElementById("studentTable").innerHTML = html;
-            document.getElementById("search").value = "";
+            document.getElementById('search').value = '';
+            setCount(data.length);
+            document.getElementById('studentTable').innerHTML = data.length
+                ? data.map((s, i) => renderStudentRow(s, i * 35)).join('')
+                : `<tr><td colspan="4"><div class="empty-state">Chưa có sinh viên nào.</div></td></tr>`;
         })
-        .catch(err => {
-            alert("Lỗi: " + err.message);
-            document.getElementById("studentTable").innerHTML = 
-                `<tr><td colspan="4" class="text-center text-danger">Lỗi kết nối</td></tr>`;
+        .catch(() => {
+            setCount(0, '—');
+            document.getElementById('studentTable').innerHTML =
+                `<tr><td colspan="4"><div class="empty-state">Không thể kết nối máy chủ.</div></td></tr>`;
         });
 }
 
-// Thêm hoặc Sửa sinh viên
-function handleSubmit(event) {
-    event.preventDefault();
-    
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    
-    if (!name || !email) {
-        alert("Vui lòng nhập đầy đủ thông tin");
-        return;
-    }
+function handleSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    if (!name || !email) return;
 
     if (isEditing) {
-        // Sửa sinh viên
-        const id = document.getElementById("editId").value;
+        const id = document.getElementById('editId').value;
         fetch(`${API}/update/${id}?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" }
-        })
-        .then(res => {
-            if (res.ok) {
-                alert("Cập nhật thành công");
-                resetForm();
-                loadStudents();
-            } else {
-                alert(" Cập nhật thất bại");
-            }
-        })
-        .catch(err => alert("Lỗi: " + err.message));
+            method: 'POST', headers: { 'Content-Type': 'application/json' }
+        }).then(r => {
+            if (r.ok) { toast('Đã cập nhật sinh viên'); resetForm(); loadStudents(); }
+            else toast('Cập nhật thất bại', 'error');
+        }).catch(() => toast('Lỗi kết nối', 'error'));
     } else {
-        // Thêm sinh viên
-        const student = { name, email };
-        
         fetch(API, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(student)
-        })
-        .then(res => {
-            if (res.ok) {
-                alert("Thêm thành công");
-                resetForm();
-                loadStudents();
-            } else {
-                alert("Thêm thất bại");
-            }
-        })
-        .catch(err => alert("Lỗi: " + err.message));
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email })
+        }).then(r => {
+            if (r.ok) { toast('Đã thêm sinh viên'); resetForm(); loadStudents(); }
+            else toast('Thêm thất bại', 'error');
+        }).catch(() => toast('Lỗi kết nối', 'error'));
     }
 }
 
-// Xóa sinh viên
 function deleteStudent(id) {
-    if (!confirm("Bạn chắc chắn muốn xóa sinh viên này?")) return;
-    
-    fetch(`${API}/delete/${id}`, { method: "POST" })
-        .then(res => {
-            if (res.ok) {
-                alert(" Xóa thành công");
-                loadStudents();
-            } else {
-                alert(" Xóa thất bại");
-            }
+    if (!confirm('Xoá sinh viên này?')) return;
+    fetch(`${API}/delete/${id}`, { method: 'POST' })
+        .then(r => {
+            if (r.ok) { toast('Đã xoá sinh viên'); loadStudents(); }
+            else toast('Xoá thất bại', 'error');
         })
-        .catch(err => alert("Lỗi: " + err.message));
+        .catch(() => toast('Lỗi kết nối', 'error'));
 }
 
-// Sửa sinh viên (điền dữ liệu vào form)
 function editStudent(id, name, email) {
     isEditing = true;
-    document.getElementById("editId").value = id;
-    document.getElementById("name").value = name;
-    document.getElementById("email").value = email;
-    document.getElementById("formTitle").textContent = " Sửa sinh viên";
-    document.getElementById("submitBtn").textContent = "Cập nhật";
-    document.getElementById("studentForm").scrollIntoView({ behavior: "smooth" });
+    document.getElementById('editId').value = id;
+    document.getElementById('name').value = name;
+    document.getElementById('email').value = email;
+    document.getElementById('formTitle').textContent = 'Chỉnh sửa thông tin';
+    document.getElementById('submitBtn').textContent = 'Lưu thay đổi';
+    document.getElementById('modeDot').classList.add('editing');
+    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => document.getElementById('name').focus(), 400);
 }
 
-// Reset form
 function resetForm() {
     isEditing = false;
-    document.getElementById("studentForm").reset();
-    document.getElementById("editId").value = "";
-    document.getElementById("formTitle").textContent = " Thêm sinh viên";
-    document.getElementById("submitBtn").textContent = "Thêm";
+    document.getElementById('studentForm').reset();
+    document.getElementById('editId').value = '';
+    document.getElementById('formTitle').textContent = 'Thêm sinh viên mới';
+    document.getElementById('submitBtn').textContent = 'Thêm';
+    document.getElementById('modeDot').classList.remove('editing');
 }
 
-// Tìm kiếm sinh viên
 function searchStudent() {
-    const name = document.getElementById("search").value.trim();
-    
-    if (!name) {
-        loadStudents();
-        return;
-    }
-
+    const name = document.getElementById('search').value.trim();
+    if (!name) { loadStudents(); return; }
     fetch(`${API}/search?name=${encodeURIComponent(name)}`)
-        .then(res => {
-            if (!res.ok) throw new Error("Tìm kiếm thất bại");
-            return res.json();
-        })
+        .then(r => { if (!r.ok) throw new Error(); return r.json(); })
         .then(data => {
-            let html = "";
-            if (data.length === 0) {
-                html = `<tr><td colspan="4" class="text-center text-muted">Không tìm thấy kết quả</td></tr>`;
-            } else {
-                data.forEach(s => {
-                    html += `
-                    <tr>
-                        <td><strong>${s.id}</strong></td>
-                        <td>${s.name}</td>
-                        <td>${s.email}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="editStudent(${s.id}, '${s.name}', '${s.email}')">Sửa</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.id})">Xóa</button>
-                        </td>
-                    </tr>`;
-                });
-            }
-            document.getElementById("studentTable").innerHTML = html;
+            setCount(data.length, data.length + ' kết quả');
+            document.getElementById('studentTable').innerHTML = data.length
+                ? data.map((s, i) => renderStudentRow(s, i * 35)).join('')
+                : `<tr><td colspan="4"><div class="empty-state">Không tìm thấy kết quả nào.</div></td></tr>`;
         })
-        .catch(err => alert("Lỗi: " + err.message));
+        .catch(() => toast('Tìm kiếm thất bại', 'error'));
 }
 
-// Load dữ liệu khi trang tải
 loadStudents();
 </script>
-
 </body>
 </html>
