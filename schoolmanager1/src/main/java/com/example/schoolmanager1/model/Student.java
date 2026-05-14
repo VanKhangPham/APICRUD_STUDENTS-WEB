@@ -16,7 +16,7 @@ public class Student {
     private UUID id;
     
     @Column(name = "HoTen")
-    private String hoTen;
+    private String name;
     
     @Column(name = "NgaySinh")
     private LocalDate ngaySinh;
@@ -40,9 +40,9 @@ public class Student {
     private LocalDate ngayNhapHoc;
 
     public Student() {}
-    public Student(UUID id, String hoTen, LocalDate ngaySinh, String gioiTinh, String diaChi, String email, String dienThoai, String maLop, LocalDate ngayNhapHoc) {
+    public Student(UUID id, String name, LocalDate ngaySinh, String gioiTinh, String diaChi, String email, String dienThoai, String maLop, LocalDate ngayNhapHoc) {
         this.id = id;
-        this.hoTen = hoTen;
+        this.name = name;
         this.ngaySinh = ngaySinh;
         this.gioiTinh = gioiTinh;
         this.diaChi = diaChi;
@@ -54,8 +54,8 @@ public class Student {
     public UUID getId() {
         return id;
     }
-    public String getHoTen() {
-        return hoTen;
+    public String getName() {
+        return name;
     }
     public LocalDate getNgaySinh() {
         return ngaySinh;
@@ -81,8 +81,8 @@ public class Student {
     public void setId(UUID id) {
         this.id = id;
     }
-    public void setHoTen(String hoTen) {
-        this.hoTen = hoTen;
+    public void setName(String name) {
+        this.name = name;
     }
     public void setNgaySinh(LocalDate ngaySinh) {
         this.ngaySinh = ngaySinh;

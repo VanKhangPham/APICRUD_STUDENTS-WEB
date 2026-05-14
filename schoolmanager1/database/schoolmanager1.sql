@@ -1,6 +1,5 @@
-﻿USE master;
+USE master;
 GO
-DELETE FROM students;
 IF DB_ID('schoolmanager1') IS NOT NULL
 BEGIN
     ALTER DATABASE schoolmanager1 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
@@ -44,7 +43,7 @@ CREATE TABLE dbo.students
 GO
 
 INSERT INTO dbo.students
-(name, NgaySinh, GioiTinh, DiaChi, Email, DienThoai, MaLop)
+(HoTen, NgaySinh, GioiTinh, DiaChi, Email, DienThoai, MaLop)
 VALUES
 (N'Nguyễn Văn An', '2002-01-15', N'Nam', N'Hà Nội','an.nguyen@gmail.com', '0901111111', 'CNTT01'),
 (N'Trần Thị Mai', '2002-03-20', N'Nữ', N'Hải Phòng','mai.tran@gmail.com', '0902222222', 'CNTT01'),
