@@ -51,10 +51,10 @@ public class StudentController {
     }
 
     @PostMapping("/update/{id}")
-    public Student updateStudent(@PathVariable UUID id, @RequestParam String name, @RequestParam String email) {
+    public Student updateStudent(@PathVariable UUID id, @RequestParam String hoTen, @RequestParam String email) {
         Student existingStudent = service.getStudentById(id);
         if (existingStudent != null) {
-            existingStudent.setName(name);
+            existingStudent.setHoTen(hoTen);
             existingStudent.setEmail(email);
             return service.addStudent(existingStudent);
         }
