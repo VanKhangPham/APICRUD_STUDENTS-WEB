@@ -1,7 +1,7 @@
-﻿CREATE DATABASE host7;
+﻿CREATE DATABASE host12;
 GO
 
-USE host7;
+USE host12;
 GO
 
 SET ANSI_NULLS ON;
@@ -12,7 +12,7 @@ GO
 
 CREATE TABLE dbo.students
 (
-    MaSV UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    ID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
 
     HoTen NVARCHAR(100) NOT NULL,
 
@@ -45,3 +45,4 @@ VALUES
 (N'Đỗ Văn Khánh', '2001-06-25', N'Nam', N'Thái Bình','khanh.do@gmail.com', '0907777777', 'CNTT01');
 GO
 
+select * from dbo.students
