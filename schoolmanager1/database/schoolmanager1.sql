@@ -1,16 +1,7 @@
-USE master;
-GO
-IF DB_ID('schoolmanager1') IS NOT NULL
-BEGIN
-    ALTER DATABASE schoolmanager1 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE schoolmanager1;
-END
+﻿CREATE DATABASE host7;
 GO
 
-CREATE DATABASE schoolmanager1;
-GO
-
-USE schoolmanager1;
+USE host7;
 GO
 
 SET ANSI_NULLS ON;
@@ -53,4 +44,4 @@ VALUES
 (N'Vũ Thị Hương', '2002-12-12', N'Nữ', N'Bắc Ninh','huong.vu@gmail.com', '0906666666', 'CNTT03'),
 (N'Đỗ Văn Khánh', '2001-06-25', N'Nam', N'Thái Bình','khanh.do@gmail.com', '0907777777', 'CNTT01');
 GO
-SELECT * FROM dbo.students;
+
